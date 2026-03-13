@@ -1,0 +1,90 @@
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 6px;
+  cursor: pointer;
+  transition: all .15s;
+  -webkit-tap-highlight-color: transparent;
+  animation: fadeUp .3s ease both;
+  position: relative;
+}
+
+.card:hover {
+  border-color: #CC000044;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px #00000066;
+}
+
+.card:active { transform: scale(.94); }
+
+.caught {
+  border-color: #5BAD5B55;
+  background: linear-gradient(135deg, #111a11, var(--card));
+}
+
+.selected {
+  border-color: var(--red) !important;
+  box-shadow: 0 0 0 2px #CC000033, 0 4px 20px #CC000022 !important;
+}
+
+.selected .img {
+  filter: drop-shadow(0 0 8px #CC000055);
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.num {
+  font-size: 9px;
+  color: var(--sub);
+  font-family: var(--font-mono);
+}
+
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+}
+
+.caught .dot {
+  background: #5BAD5B;
+  border-color: #5BAD5B;
+}
+
+.img {
+  width: 100%;
+  max-height: 72px;
+  object-fit: contain;
+  transition: all .3s;
+}
+
+.card:not(.caught) .img { opacity: .82; }
+.card:hover .img { transform: scale(1.08); }
+
+.name {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: capitalize;
+  text-align: center;
+  margin-top: 3px;
+  line-height: 1.2;
+}
+
+.typeDots {
+  display: flex;
+  justify-content: center;
+  gap: 3px;
+  margin-top: 4px;
+}
+
+.dot2 {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
