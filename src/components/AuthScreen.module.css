@@ -190,3 +190,12 @@
 
 .submitBtn:active:not(:disabled) { transform: scale(.97); }
 .submitBtn:disabled { background: #444; cursor: not-allowed; }
+
+.hint {
+  text-align: center;
+  font-size: 11px;
+  color: var(--sub);
+  font-family: var(--font-mono);
+  margin-top: 12px;
+  opacity: .7;
+}

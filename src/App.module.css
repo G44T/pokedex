@@ -22,34 +22,37 @@
   top: 14px;
   left: 14px;
   z-index: 500;
-  width: 36px;
-  height: 36px;
-  border-radius: 9px;
-  border: 1px solid var(--border);
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid #CC000055;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 17px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #1a1a24;
-  color: var(--sub);
-  box-shadow: 0 2px 8px #00000044;
-  transition: all .18s ease;
+  background: linear-gradient(145deg, #200808, #1a0505);
+  color: #CC4444;
+  box-shadow: 0 2px 12px #CC000033, 0 0 0 0px #CC000000;
+  transition: all .2s ease;
   -webkit-tap-highlight-color: transparent;
 }
 
 .sidebarToggle:hover {
-  border-color: #444;
-  color: var(--text);
-  background: #222230;
+  border-color: #CC000099;
+  color: #ff6666;
+  background: linear-gradient(145deg, #2d0a0a, #220808);
+  box-shadow: 0 3px 16px #CC000055, 0 0 0 1px #CC000033;
+  transform: scale(1.04);
 }
 
-.sidebarToggle:active { transform: scale(.92); }
+.sidebarToggle:active { transform: scale(.93); }
 
 .toggleOpen {
-  border-color: #444;
-  color: var(--text);
-  background: #222230;
+  border-color: #CC000077;
+  color: #ff5555;
+  background: linear-gradient(145deg, #2a0808, #1e0606);
+  box-shadow: 0 2px 14px #CC000044;
 }
 
 /* Badge on toggle (caught count) */
@@ -71,6 +74,63 @@
   padding: 0 4px;
   border: 2px solid var(--dark);
   pointer-events: none;
+}
+
+
+/* ── Sidebar pin button ── */
+.pinBtn {
+  position: absolute;
+  top: 14px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--sub);
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .15s ease;
+  -webkit-tap-highlight-color: transparent;
+  z-index: 10;
+}
+
+.pinBtn:hover {
+  border-color: #CC000055;
+  color: #CC4444;
+  background: #CC000011;
+}
+
+.pinActive {
+  border-color: #CC000077;
+  color: #CC3333;
+  background: #CC000018;
+}
+
+/* ── Pinned sidebar (desktop only) ── */
+@media (min-width: 900px) {
+  .shellPinned {
+    flex-direction: row !important;
+  }
+  .shellPinned .sidebar {
+    position: relative !important;
+    transform: translateX(0) !important;
+    flex-shrink: 0;
+    height: 100vh;
+  }
+  .shellPinned .sidebarBackdrop {
+    display: none !important;
+  }
+  .shellPinned .mainPanel {
+    flex: 1;
+    min-width: 0;
+  }
+  .shellPinned .sidebarToggle {
+    left: calc(var(--sidebar) + 14px);
+  }
 }
 
 /* ── Sidebar backdrop (mobile) ── */
@@ -123,6 +183,7 @@
 
 /* ── Sidebar internals ── */
 .sidebarLogo {
+  position: relative;
   padding: 72px 20px 16px; /* top padding clears the toggle button */
   border-bottom: 1px solid var(--border);
 }

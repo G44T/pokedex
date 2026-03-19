@@ -14,6 +14,7 @@ export default function App() {
   const [showSplash, setShowSplash]     = useState(false)
   const [detailOpen, setDetailOpen]     = useState(false)
   const [sidebarOpen, setSidebarOpen]   = useState(false)  // always starts closed
+  const [sidebarPinned, setSidebarPinned] = useState(false)  // pinned = always visible on desktop
 
   const {
     list, filtered, loading: listLoading, progress,
@@ -46,9 +47,9 @@ export default function App() {
     }
   }, [listLoading, showSplash])
 
-  // Close sidebar when clicking outside (mobile)
+  // Close sidebar on outside click — but not when pinned
   useEffect(() => {
-    if (!sidebarOpen) return
+    if (!sidebarOpen || sidebarPinned) return
     const handler = (e) => {
       if (!e.target.closest('[data-sidebar]') && !e.target.closest('[data-sidebar-toggle]')) {
         setSidebarOpen(false)
@@ -56,7 +57,13 @@ export default function App() {
     }
     document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
-  }, [sidebarOpen])
+  }, [sidebarOpen, sidebarPinned])
+
+  function handlePin() {
+    const next = !sidebarPinned
+    setSidebarPinned(next)
+    if (next) setSidebarOpen(true)   // pin → keep open
+  }
 
   function handleSelectPokemon(id) { loadPokemon(id); setDetailOpen(true) }
   function handleClose()           { setDetailOpen(false); clear() }
@@ -74,15 +81,15 @@ export default function App() {
   if (showSplash && listLoading)           return <Splash message="Cargando Pokémon..." />
 
   return (
-    <div className={`${styles.shell} ${hasDetail ? styles.hasDetail : ''}`}>
+    <div className={`${styles.shell} ${hasDetail ? styles.hasDetail : ''} ${sidebarPinned ? styles.shellPinned : ''}`}>
 
       {/* ── Sidebar overlay (mobile backdrop) ── */}
-      {sidebarOpen && (
+      {sidebarOpen && !sidebarPinned && (
         <div className={styles.sidebarBackdrop} onClick={() => setSidebarOpen(false)} />
       )}
 
-      {/* ── Sidebar toggle button — always visible & eye-catching ── */}
-      <button
+      {/* ── Sidebar toggle button — hidden when pinned ── */}
+      {!sidebarPinned && <button
         className={`${styles.sidebarToggle} ${sidebarOpen ? styles.toggleOpen : ''}`}
         onClick={() => setSidebarOpen(v => !v)}
         data-sidebar-toggle
@@ -92,7 +99,7 @@ export default function App() {
         {!sidebarOpen && caughtCount > 0 && (
           <span className={styles.toggleBadge}>{caughtCount}</span>
         )}
-      </button>
+      </button>}
 
       {/* ── Sidebar ── */}
       <aside
@@ -103,6 +110,14 @@ export default function App() {
         <div className={styles.sidebarLogo}>
           <div className={styles.logo}>POKé<span>DEX</span></div>
           <div className={styles.logoSub}>GEN I–IX · 1025 POKÉMON</div>
+          {/* Pin button — desktop only */}
+          <button
+            className={`${styles.pinBtn} ${sidebarPinned ? styles.pinActive : ''}`}
+            onClick={handlePin}
+            title={sidebarPinned ? 'Desanclar barra lateral' : 'Anclar barra lateral'}
+          >
+            {sidebarPinned ? '📌' : '📍'}
+          </button>
           <div className={styles.caughtBadge}>
             <div>
               <div className={styles.caughtNum}>{caughtCount}</div>
@@ -119,11 +134,11 @@ export default function App() {
         {/* User */}
         <div className={styles.userBar}>
           <div className={styles.userAvatar}>
-            {(user.displayName || user.email || '?')[0].toUpperCase()}
+            {(user.username || '?')[0].toUpperCase()}
           </div>
           <div className={styles.userInfo}>
-            <div className={styles.userName}>{user.displayName || 'Entrenador'}</div>
-            <div className={styles.userEmail}>{user.email}</div>
+            <div className={styles.userName}>{user.username}</div>
+            <div className={styles.userEmail}>{user.username}</div>
           </div>
           <span className={`${styles.syncBadge} ${syncState === 'syncing' ? styles.syncing : ''}`}>
             {syncState === 'syncing' ? 'SYNC...' : 'SYNC ✓'}
@@ -152,7 +167,7 @@ export default function App() {
               <button
                 key={g.id}
                 className={`${styles.genPill} ${gen === g.id ? styles.genActive : ''}`}
-                onClick={() => { setGen(g.id); setSidebarOpen(false) }}
+                onClick={() => { setGen(g.id); if (!sidebarPinned) setSidebarOpen(false) }}
               >
                 {g.label}
               </button>

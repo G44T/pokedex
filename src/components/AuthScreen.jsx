@@ -2,47 +2,30 @@ import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import styles from './AuthScreen.module.css'
 
-const AUTH_ERRORS = {
-  'auth/user-not-found':          'No existe cuenta con ese email.',
-  'auth/wrong-password':          'Contraseña incorrecta.',
-  'auth/invalid-email':           'Email inválido.',
-  'auth/too-many-requests':       'Demasiados intentos. Espera un momento.',
-  'auth/invalid-credential':      'Email o contraseña incorrectos.',
-  'auth/email-already-in-use':    'Ya existe una cuenta con ese email.',
-  'auth/weak-password':           'La contraseña es demasiado débil.',
-  'auth/configuration-not-found': '⚠️ Firebase no configurado. Reemplaza TU_API_KEY en src/firebase.js',
-  'auth/api-key-not-valid':       '⚠️ API Key inválida. Revisa src/firebase.js',
-  'auth/network-request-failed':  'Error de red. Verifica tu conexión.',
-}
-
 export default function AuthScreen() {
-  const { login, register, resetPassword } = useAuth()
-  const [tab, setTab] = useState('login')
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
+  const { login, register } = useAuth()
+  const [tab, setTab]       = useState('login')
+  const [error, setError]   = useState('')
   const [loading, setLoading] = useState(false)
 
   // Login fields
-  const [loginEmail, setLoginEmail] = useState('')
-  const [loginPw, setLoginPw] = useState('')
+  const [loginUser, setLoginUser] = useState('')
+  const [loginPw,   setLoginPw]   = useState('')
 
   // Register fields
-  const [regName, setRegName] = useState('')
-  const [regEmail, setRegEmail] = useState('')
-  const [regPw, setRegPw] = useState('')
-  const [regPw2, setRegPw2] = useState('')
+  const [regUser,  setRegUser]  = useState('')
+  const [regPw,    setRegPw]    = useState('')
+  const [regPw2,   setRegPw2]   = useState('')
 
-  function clearMessages() { setError(''); setSuccess('') }
+  function switchTab(t) { setTab(t); setError('') }
 
   async function handleLogin(e) {
     e.preventDefault()
-    if (!loginEmail || !loginPw) return setError('Por favor completa todos los campos.')
-    clearMessages(); setLoading(true)
+    setError(''); setLoading(true)
     try {
-      await login(loginEmail, loginPw)
+      await login(loginUser, loginPw)
     } catch (err) {
-      console.error(err.code, err.message)
-      setError(AUTH_ERRORS[err.code] || `Error: ${err.code}`)
+      setError(err.message)
     } finally {
       setLoading(false)
     }
@@ -50,68 +33,54 @@ export default function AuthScreen() {
 
   async function handleRegister(e) {
     e.preventDefault()
-    if (!regName || !regEmail || !regPw) return setError('Por favor completa todos los campos.')
     if (regPw !== regPw2) return setError('Las contraseñas no coinciden.')
-    if (regPw.length < 6) return setError('La contraseña debe tener al menos 6 caracteres.')
-    clearMessages(); setLoading(true)
+    setError(''); setLoading(true)
     try {
-      await register(regName, regEmail, regPw)
+      await register(regUser, regPw)
     } catch (err) {
-      console.error(err.code, err.message)
-      setError(AUTH_ERRORS[err.code] || `Error: ${err.code}`)
+      setError(err.message)
     } finally {
       setLoading(false)
-    }
-  }
-
-  async function handleReset() {
-    if (!loginEmail) return setError('Ingresa tu email primero.')
-    clearMessages()
-    try {
-      await resetPassword(loginEmail)
-      setSuccess('✅ Enviamos un link de recuperación a tu email.')
-    } catch {
-      setError('Error al enviar email. Verifica que sea correcto.')
     }
   }
 
   return (
     <div className={styles.screen}>
       <div className={styles.card}>
+
+        {/* Logo */}
         <div className={styles.logo}>
           <div className={styles.ball} />
           <h1>POKé<span>DEX</span></h1>
           <p>TU COLECCIÓN EN LA NUBE</p>
         </div>
 
-        {(error || success) && (
-          <div className={`${styles.message} ${success ? styles.msgSuccess : styles.msgError}`}>
-            {error || success}
-          </div>
-        )}
+        {/* Error */}
+        {error && <div className={styles.message}>{error}</div>}
 
+        {/* Tabs */}
         <div className={styles.tabs}>
           <button
             className={`${styles.tabBtn} ${tab === 'login' ? styles.tabActive : ''}`}
-            onClick={() => { setTab('login'); clearMessages() }}
+            onClick={() => switchTab('login')}
           >Iniciar sesión</button>
           <button
             className={`${styles.tabBtn} ${tab === 'register' ? styles.tabActive : ''}`}
-            onClick={() => { setTab('register'); clearMessages() }}
+            onClick={() => switchTab('register')}
           >Registrarse</button>
         </div>
 
         {tab === 'login' ? (
           <form onSubmit={handleLogin}>
             <div className={styles.field}>
-              <label>EMAIL</label>
+              <label>USUARIO</label>
               <input
                 className={styles.input}
-                type="email"
-                placeholder="entrenador@pokemon.com"
-                autoComplete="email"
-                value={loginEmail}
-                onChange={e => setLoginEmail(e.target.value)}
+                type="text"
+                placeholder="AshKetchum"
+                autoComplete="username"
+                value={loginUser}
+                onChange={e => setLoginUser(e.target.value)}
               />
             </div>
             <div className={styles.field}>
@@ -125,11 +94,8 @@ export default function AuthScreen() {
                 onChange={e => setLoginPw(e.target.value)}
               />
             </div>
-            <div className={styles.forgot}>
-              <button type="button" onClick={handleReset}>¿Olvidaste tu contraseña?</button>
-            </div>
             <button className={styles.submitBtn} type="submit" disabled={loading}>
-              {loading ? 'CARGANDO...' : 'ENTRAR'}
+              {loading ? 'VERIFICANDO...' : 'ENTRAR'}
             </button>
           </form>
         ) : (
@@ -139,21 +105,10 @@ export default function AuthScreen() {
               <input
                 className={styles.input}
                 type="text"
-                placeholder="Ash Ketchum"
-                autoComplete="name"
-                value={regName}
-                onChange={e => setRegName(e.target.value)}
-              />
-            </div>
-            <div className={styles.field}>
-              <label>EMAIL</label>
-              <input
-                className={styles.input}
-                type="email"
-                placeholder="entrenador@pokemon.com"
-                autoComplete="email"
-                value={regEmail}
-                onChange={e => setRegEmail(e.target.value)}
+                placeholder="AshKetchum"
+                autoComplete="username"
+                value={regUser}
+                onChange={e => setRegUser(e.target.value)}
               />
             </div>
             <div className={styles.field}>
@@ -179,10 +134,16 @@ export default function AuthScreen() {
               />
             </div>
             <button className={styles.submitBtn} type="submit" disabled={loading}>
-              {loading ? 'CARGANDO...' : 'CREAR CUENTA'}
+              {loading ? 'CREANDO CUENTA...' : 'CREAR CUENTA'}
             </button>
           </form>
         )}
+
+        <p className={styles.hint}>
+          {tab === 'login'
+            ? '¿No tienes cuenta? Regístrate arriba.'
+            : 'El usuario es único. La contraseña se guarda cifrada.'}
+        </p>
       </div>
     </div>
   )

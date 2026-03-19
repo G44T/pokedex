@@ -1,25 +1,22 @@
 // ════════════════════════════════════════════════════════════
-// 🔥 CONFIGURACIÓN FIREBASE
+// 🔥 CONFIGURACIÓN FIREBASE — Solo Firestore (sin Firebase Auth)
 // ════════════════════════════════════════════════════════════
-// 1. Ve a https://console.firebase.google.com
-// 2. Crea un proyecto → Agrega app web → Copia tu config aquí
-// 3. Activa Authentication → Email/Contraseña
-// 4. Crea Firestore Database en modo prueba
+// Copia .env.example → .env y llena tus valores de Firebase.
+// Obtén las credenciales en: console.firebase.google.com
+//   → Tu proyecto → ⚙️ Configuración → General → Tus apps → Web
 // ════════════════════════════════════════════════════════════
 
 import { initializeApp } from 'firebase/app'
-import { getAuth } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  apiKey:            import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain:        import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId:         import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket:     import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  appId:             import.meta.env.VITE_FIREBASE_APP_ID,
 }
 
 const app = initializeApp(firebaseConfig)
-export const auth = getAuth(app)
 export const db = getFirestore(app)
