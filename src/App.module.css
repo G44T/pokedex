@@ -388,7 +388,7 @@
   letter-spacing: 1px;
 }
 
-/* ── Detail col (desktop) ── */
+/* ── Detail col (desktop) — only shown when a pokemon is selected ── */
 .detailCol { display: none; }
 
 @media (min-width: 900px) {
@@ -397,7 +397,13 @@
     overflow-y: auto;
     height: 100%;
     background: var(--dark);
+    animation: slideInRight .2s ease;
   }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
 .detailPlaceholder {

@@ -1,7 +1,7 @@
 import { getTypeColor } from '../utils/constants'
 import styles from './PokemonCard.module.css'
 
-export default function PokemonCard({ pokemon, caught, selected, onClick }) {
+export default function PokemonCard({ pokemon, caught, selected, onClick, onToggleCatch }) {
   const { id, name, types } = pokemon
   return (
     <div
@@ -11,7 +11,12 @@ export default function PokemonCard({ pokemon, caught, selected, onClick }) {
     >
       <div className={styles.top}>
         <span className={styles.num}>#{String(id).padStart(4, '0')}</span>
-        <span className={styles.dot} />
+        {/* Catch toggle button — stopPropagation so it doesn't open detail panel */}
+        <button
+          className={`${styles.catchBtn} ${caught ? styles.catchBtnCaught : ''}`}
+          onClick={onToggleCatch}
+          title={caught ? 'Marcar como no capturado' : 'Marcar como capturado'}
+        />
       </div>
       <img
         className={styles.img}

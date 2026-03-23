@@ -73,7 +73,7 @@ export default function App() {
   }
 
   const caughtCount = Object.values(caught).filter(Boolean).length
-  const hasDetail   = !!selectedId
+  const hasDetail   = !!selectedId && detailOpen
 
   // ── Auth guards ────────────────────────────────────────
   if (user === undefined && !authTimedOut) return <Splash message="Iniciando..." />
@@ -244,6 +244,10 @@ export default function App() {
                   caught={!!caught[p.id]}
                   selected={selectedId === p.id}
                   onClick={() => handleSelectPokemon(p.id)}
+                  onToggleCatch={(e) => {
+                    e.stopPropagation()
+                    saveCaught({ ...caught, [p.id]: !caught[p.id] })
+                  }}
                 />
               ))}
             </div>

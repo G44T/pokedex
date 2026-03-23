@@ -45,16 +45,55 @@
   font-family: var(--font-mono);
 }
 
-.dot {
-  width: 9px;
-  height: 9px;
+.catchBtn {
+  /* Large hit area for easy tapping */
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  border: 1.5px solid var(--border);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: background .15s;
+  flex-shrink: 0;
+  position: relative;
+  margin: -9px -9px -9px 0; /* pull outward so it doesn't push layout */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.caught .dot {
+/* Visual circle drawn via ::after — stays small, hit area stays large */
+.catchBtn::after {
+  content: '';
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  background: transparent;
+  transition: all .15s;
+  display: block;
+}
+
+.catchBtn:hover::after {
+  border-color: #5BAD5B99;
+  background: #5BAD5B22;
+  transform: scale(1.25);
+}
+
+.catchBtn:active::after {
+  transform: scale(.85);
+}
+
+.catchBtnCaught::after {
   background: #5BAD5B;
   border-color: #5BAD5B;
+  box-shadow: 0 0 6px #5BAD5B55;
+}
+
+.catchBtnCaught:hover::after {
+  background: #4a9a4a;
+  border-color: #4a9a4a;
 }
 
 .img {
